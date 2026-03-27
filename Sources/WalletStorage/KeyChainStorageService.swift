@@ -217,10 +217,12 @@ public actor KeyChainStorageService: DataStorageService  {
 		// load metadata from description column
 		let descrBase64 =  dict[kSecAttrDescription as String] as? String
 		let md: Data? = if let descrBase64 { Data(base64Encoded: descrBase64) } else { nil }
-		let docTypes = DocMetadata(from: md)?.docTypes
+		let docMeta = DocMetadata(from: md)
+		let docTypes = docMeta?.docTypes
+		let ldpIRIExpansionStrings = docMeta?.ldpIRIExpansionStrings
 		// load key usage from comment column
 		let commentBase64 =  dict[kSecAttrComment as String] as? String
 		let dki: Data? = if let commentBase64 { Data(base64Encoded: commentBase64) } else { nil }
-		return Document(id: dict[kSecAttrAccount as String] as! String, docType: dict[kSecAttrLabel as String] as? String, docTypes: docTypes, docDataFormat: DocDataFormat(rawValue: dict[kSecAttrType as String] as? String ?? DocDataFormat.cbor.rawValue) ?? DocDataFormat.cbor, data: data, docKeyInfo: dki, createdAt: (dict[kSecAttrCreationDate as String] as! Date), modifiedAt: dict[kSecAttrModificationDate as String] as? Date, metadata: md, displayName: nil, status: status)
+		return Document(id: dict[kSecAttrAccount as String] as! String, docType: dict[kSecAttrLabel as String] as? String, docTypes: docTypes, ldpIRIExpansionStrings: ldpIRIExpansionStrings, docDataFormat: DocDataFormat(rawValue: dict[kSecAttrType as String] as? String ?? DocDataFormat.cbor.rawValue) ?? DocDataFormat.cbor, data: data, docKeyInfo: dki, createdAt: (dict[kSecAttrCreationDate as String] as! Date), modifiedAt: dict[kSecAttrModificationDate as String] as? Date, metadata: md, displayName: nil, status: status)
 	}
 }
